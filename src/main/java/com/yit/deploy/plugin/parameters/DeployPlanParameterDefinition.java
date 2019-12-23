@@ -50,7 +50,7 @@ public class DeployPlanParameterDefinition extends ParameterDefinition implement
     private transient DeployModelTable modelTable;
     private transient Environment _environment;
 
-    private transient DataStorage dataStorage;
+    private DataStorage dataStorage;
 
     @DataBoundConstructor
     public DeployPlanParameterDefinition(String name, String envName, String defaultInventoryName, String predefinedInventoryListJson, String jobName, String description) {
@@ -96,7 +96,7 @@ public class DeployPlanParameterDefinition extends ParameterDefinition implement
             clearActiveInventoryName();
         }
 
-        getDataStorage().saveLastDeployInventory(inventory);
+        dataStorage.saveLastDeployInventory(inventory);
         saveDeployInventorySnapshot(inventory);
 
         inventory.prepareForDeploy(env);
@@ -146,12 +146,12 @@ public class DeployPlanParameterDefinition extends ParameterDefinition implement
         String newInventoryName = "snapshot-" + df.format(new Date());
         inventory.setName(newInventoryName);
         inventory.setSharedBy(null); // disable sharing properties since we are just saving a snapshot
-        getDataStorage().saveDeployInventory(inventory);
+        dataStorage.saveDeployInventory(inventory);
     }
 
     @JavaScriptMethod
     public List<String> getSavedInventoryNames() {
-        return getDataStorage().listInventoryNames();
+        return dataStorage.listInventoryNames();
     }
 
     @JavaScriptMethod
@@ -197,12 +197,12 @@ public class DeployPlanParameterDefinition extends ParameterDefinition implement
 
     @JavaScriptMethod
     public void removeInventory(String inventoryName) {
-        getDataStorage().deleteDeployInventory(inventoryName);
+        dataStorage.deleteDeployInventory(inventoryName);
     }
 
     @JavaScriptMethod
     public DeployInventory getLastInventory() {
-        DeployInventory inventory = getDataStorage().loadLastDeployInventory();
+        DeployInventory inventory = dataStorage.loadLastDeployInventory();
         if (inventory == null) inventory = new DeployInventory();
         inventory.initialize(getEnvironment());
         return inventory;
@@ -272,15 +272,15 @@ public class DeployPlanParameterDefinition extends ParameterDefinition implement
     }
 
     public String getActiveInventoryName() {
-        return getDataStorage().getActiveInventoryName();
+        return dataStorage.getActiveInventoryName();
     }
 
     public void setActiveInventoryName(String name) {
-        getDataStorage().setActiveInventoryName(name);
+        dataStorage.setActiveInventoryName(name);
     }
 
     public void clearActiveInventoryName() {
-        getDataStorage().setActiveInventoryName(null);
+        dataStorage.setActiveInventoryName(null);
     }
 
     public String getCurrentUserID() {
@@ -297,7 +297,7 @@ public class DeployPlanParameterDefinition extends ParameterDefinition implement
 
     public DeployInventory getDeployInventory(String inventoryName) {
         Environment env = getEnvironment();
-        DeployInventory inventory = getDataStorage().loadDeployInventory(inventoryName);
+        DeployInventory inventory = dataStorage.loadDeployInventory(inventoryName);
         if (inventory == null) {
             inventory = getPredefinedInventory(inventoryName, env);
         } else {
@@ -398,20 +398,20 @@ public class DeployPlanParameterDefinition extends ParameterDefinition implement
         inventory.setUpdateDate(Utils.formatDate(new Date()));
         inventory.setVersion(old.getVersion() + 1);
 
-        getDataStorage().saveDeployInventory(inventory);
+        dataStorage.saveDeployInventory(inventory);
         LOGGER.info("deploy inventory " + inventory.getName() + " is saved with version " + inventory.getVersion());
         notifyAll();
     }
 
     public synchronized void disableSharing(String inventoryName) {
-        DeployInventory inventory = getDataStorage().loadDeployInventory(inventoryName);
+        DeployInventory inventory = dataStorage.loadDeployInventory(inventoryName);
         if (inventory == null) return;
         inventory.setSharedBy(null);
         saveDeployInventory(inventory);
     }
 
     public String getDefaultInventoryName() {
-        return Lambda.cascade(getDataStorage().getActiveInventoryName(), defaultInventoryName, "release-" + new SimpleDateFormat("yyyy-MM-dd-HH-mm").format(new Date()));
+        return Lambda.cascade(dataStorage.getActiveInventoryName(), defaultInventoryName, "release-" + new SimpleDateFormat("yyyy-MM-dd-HH-mm").format(new Date()));
     }
 
     public DeployInventoryList getPredefinedInventoryList() {
@@ -444,19 +444,6 @@ public class DeployPlanParameterDefinition extends ParameterDefinition implement
 
     public void setJobName(String jobName) {
         this.jobName = jobName;
-    }
-
-    private DataStorage getDataStorage() {
-        if (dataStorage == null) {
-            dataStorage = new DataStorage(jobName, getName());
-        }
-        return dataStorage;
-    }
-
-    private void readObject(ObjectInputStream stream)
-        throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        this.dataStorage = new DataStorage(jobName, getName());
     }
 
     @Extension
