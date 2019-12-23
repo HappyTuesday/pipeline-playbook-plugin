@@ -243,7 +243,7 @@ public abstract class DeployExecution extends AbstractStepExecutionImpl {
 
     private void setupConsoleLogFilter() {
         ConsoleLogFilter filter = getContextVariable(ConsoleLogFilter.class);
-        filter = new MergedFilter(filter, new LoggingPrefixFilter(this::getLoggingPrefix));
+        filter = new MergedFilter(filter, new LoggingPrefixFilter(this));
         filter = new MergedFilter(filter, getAnsiColorFilter());
         clearTaskListener();
         setContextVariable(ConsoleLogFilter.class, filter);
@@ -400,10 +400,10 @@ public abstract class DeployExecution extends AbstractStepExecutionImpl {
 
     static class LoggingPrefixFilter extends ConsoleLogFilter implements Serializable {
         private static final long serialVersionUID = 1;
-        private final Supplier<String> loggingPrefixAccessor;
+        private final DeployExecution execution;
 
-        LoggingPrefixFilter(Supplier<String> loggingPrefixAccessor) {
-            this.loggingPrefixAccessor = loggingPrefixAccessor;
+        LoggingPrefixFilter(DeployExecution execution) {
+            this.execution = execution;
         }
 
         @Override public OutputStream decorateLogger(AbstractBuild _ignore, OutputStream logger) {
@@ -414,7 +414,7 @@ public abstract class DeployExecution extends AbstractStepExecutionImpl {
             return new LineTransformationOutputStream() {
                 @Override
                 protected void eol(byte[] b, int len) throws IOException {
-                    String prefix = loggingPrefixAccessor.get();
+                    String prefix = execution.getLoggingPrefix();
                     if (prefix != null && !prefix.isEmpty()) {
                         String span = String.format("<span style=\"color:#9A9999\">[%s] </span>", prefix);
                         try {
