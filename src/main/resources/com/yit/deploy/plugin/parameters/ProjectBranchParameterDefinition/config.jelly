@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="Name">
+    <f:textbox name="parameter.name" value="${instance.name}" />
+  </f:entry>
+  <f:entry title="Default Value">
+    <f:textbox name="parameter.defaultValue" value="${instance.defaultValue}" />
+  </f:entry>
+  <f:entry title="Project Name">
+    <f:textbox name="parameter.projectName" value="${instance.projectName}" />
+  </f:entry>
+  <f:entry title="Target Sync Job Name">
+    <f:textbox name="parameter.targetSyncJobName" value="${instance.targetSyncJobName}" />
+  </f:entry>
+  <f:entry title="Readonly">
+    <f:checkbox name="parameter.readonly" value="${instance.readonly}" />
+  </f:entry>
+  <f:entry title="Description">
+    <f:textarea name="parameter.description" value="${instance.description}" codemirror-mode="${app.markupFormatter.codeMirrorMode}" codemirror-config="${app.markupFormatter.codeMirrorConfig}" previewEndpoint="/markupFormatter/previewDescription" />
+  </f:entry>
+</j:jelly>

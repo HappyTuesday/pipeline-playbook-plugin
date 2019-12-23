@@ -1,0 +1,48 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+         xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+    <f:entry title="${it.name}" description="${it.formattedDescription}">
+        <div name="parameter">
+            <input type="hidden" name="name" value="${it.name}" />
+            <f:textbox name="value" value="${it.defaultValue}" id="${it.name}Input"/>
+            <div style="margin-top: 0.4em;margin-bottom: 0.3em;">
+                <a id="${it.name}Copy2syncButton" href="#" style="color: #2e6da4;">save to sync job</a>
+                <span id="${it.name}Tip" style="color: #333;"> loading default branch...</span>
+            </div>
+            <script>
+                let serviceObject = <st:bind value="${it}"/>;
+                let input = ${it.name}Input;
+                let span = ${it.name}Tip;
+
+                serviceObject.getFinalDefaultValue(function(res) {
+                    let result = res.responseObject();
+                    if (result.error) {
+                        span.innerText = "  (failed to loading default branch: " + error + ")";
+                    } else if (input.value === "${it.defaultValue}") { // avoid overriding modification
+                        input.value = result.value;
+                        span.innerText = "";
+                    } else {
+                        span.innerText = "default branch loaded as " + result.value;
+                    }
+                });
+
+                let btn = ${it.name}Copy2syncButton;
+                btn.onclick = function() {
+                    let value = input.value;
+                    serviceObject.saveValueToSyncJob(value, function(res) {
+                    let error = res.responseObject();
+                        if (error) {
+                            span.innerText = "  (failed to save: " + error + ")";
+                        } else {
+                            span.innerText = "  (branch [" + value + "] is saved)";
+                        }
+                    });
+                    return false;
+                };
+
+                input.readOnly = ${it.readonly};
+            </script>
+        </div>
+    </f:entry>
+</j:jelly>

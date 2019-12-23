@@ -1,0 +1,503 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/bootstrap.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/knockout.autocomplete.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/cytoscape-context-menus.css"/>
+    <link rel="stylesheet" href="${rootURL}/plugin/playbook-pipeline/css/deploy-plan-parameter.css"/>
+
+    <f:entry title="${it.name}">
+        <div class="deploy-plan-parameter-wrapper" name="parameter" id="${it.name}DeployPlanParameterWrapper">
+            <input type="hidden" name="name" value="${it.name}" />
+            <input type="hidden" name="value" />
+
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="${rootURL}/job/${it.jobName}">${it.jobName}</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="${rootURL}">Jenkins Home</a></li>
+                            <li><a href="${rootURL}/plugin/playbook-pipeline/help.html">Help</a></li>
+                        </ul>
+                        <div class="form navbar-form navbar-right">
+                            <div class="form-group">
+                                <input type="text" class="form-control" data-bind="autocomplete: {data: savedInventoryNames, onSelect: onSearchSavedInventories}" placeholder="Search History..."/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-3 col-md-2 sidebar">
+                        <h5>预定义的部署清单</h5>
+                        <ul class="nav nav-sidebar" data-bind="foreach: predefinedInventoryList">
+                            <li class="inventory-li">
+                                <a class="right-icon" data-bind="click: $parent.onAppendPredefinedPlansToCurrentInventory"><span class="glyphicon glyphicon-plus"></span></a>
+                                <a data-bind="text: name, click: $parent.onLoadPredefinedInventory"></a>
+                            </li>
+                        </ul>
+                        <h5>已保存的部署清单</h5>
+                        <ul class="nav nav-sidebar" data-bind="foreach: savedInventoryNames()">
+                            <li class="save-inventory inventory-li">
+                                <a data-bind="click: $parent.onRemoveInventory" class="right-icon"><span class="glyphicon glyphicon-trash"></span></a>
+                                <a class="right-icon" data-bind="click: $parent.onAppendSavedPlansToCurrentInventory"><span class="glyphicon glyphicon-plus"></span></a>
+                                <a data-bind="text: $data, click: $parent.onLoadSavedInventory"></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+                        <div class="main" data-bind="template: {name: 'inventory-template', data: deployInventory}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </f:entry>
+    <script type="text/html" id="inventory-template">
+        <h3 class="inventory-title">
+            <span>
+                <span>部署清单名称: </span>
+                <input data-bind="value: name, attr: {size: name().length}, hasFocus: editingName" placeholder="Inventory Name" title="click to edit inventory name"/>
+                <small class="glyphicon glyphicon-pencil edit-icon" data-bind="click: onEditName"></small>
+            </span>
+            <span class="right">
+                <span class="sharing-log" data-bind="text: sharingManager.lastLog"></span>
+                &lt;!-- ko ifnot: shared --&gt;
+                <button class="btn btn-primary" data-bind="click: onEnableSharing">启用分享</button>
+                &lt;!-- /ko --&gt;
+                &lt;!-- ko if: shared() &amp;&amp; !sharedByMe() --&gt;
+                <button class="btn btn-danger" data-bind="click: onTakeoverSharing">接管分享</button>
+                &lt;!-- /ko --&gt;
+                &lt;!-- ko if: shared() &amp;&amp; sharedByMe --&gt;
+                <button class="btn btn-danger" data-bind="click: onDisableSharing">结束分享</button>
+                &lt;!-- /ko --&gt;
+                &lt;!-- ko ifnot: shared --&gt;
+                <button class="btn btn-primary" data-bind="click: $parent.onSaveInventory">保存</button>
+                &lt;!-- /ko --&gt;
+                &lt;!-- ko if: !shared() || sharedByMe() --&gt;
+                <button class="btn btn-danger" data-bind="click: $parent.onExecuteBuild">执行</button>
+                &lt;!-- /ko --&gt;
+            </span>
+        </h3>
+        <div class="options">
+            <label><input type="checkbox" data-bind="checked: confirmBeforeExecute"/>Confirm Before Execute</label>
+            <label><input type="checkbox" data-bind="checked: confirmBeforeRetry"/>Confirm Before Retry</label>
+            <label><input type="checkbox" data-bind="checked: autoAdjustBranch"/>Auto Adjust Branch</label>
+            <label><input type="checkbox" data-bind="checked: ignoreFailure"/>Ignore Failure</label>
+            <label>Retry <input class="input-small" data-bind="value: retries"/> Times</label>
+            &lt;!-- ko if: shared --&gt;
+            <label>Shared By: <span data-bind="text: sharedBy"></span></label>
+            &lt;!-- /ko --&gt;
+            <label>Update Time: <span data-bind="text: updateDate"></span></label>
+        </div>
+        <div>
+            <ul class="plans" data-bind="template: { name: 'plan-template', foreach: plans, afterAdd: showElement, beforeRemove: hideElement}"></ul>
+        </div>
+        <div>
+            <button class="btn btn-default" data-bind="click: onAddPlan">Add Plan</button>
+        </div>
+        <div data-bind="if: showUsageDescription">
+            <h3>环境使用详情:</h3>
+            <div class="form">
+                <div class="form-group">
+                    <label>Environment Owner</label>
+                    <input class="form-control" data-bind="value: owner" placeholder="environment owner"/>
+                </div>
+                <div class="form-group">
+                    <label>Notification Email Addresses</label>
+                    <input class="form-control" data-bind="value: notificationMails" placeholder="comma separated email addresses"/>
+                </div>
+                <div class="form-group">
+                    <label>Environment Usage Description</label>
+                    <textarea class="form-control" data-bind="value: usageDescription" rows="4"></textarea>
+                </div>
+            </div>
+        </div>
+        <div data-bind="if: changes() &amp;&amp; changes().length > 0" class="inventory-changes-container">
+            <h3>Change Log:</h3>
+            <ul data-bind="template: { name: 'change-template', foreach: changes}"></ul>
+        </div>
+    </script>
+    <script type="text/html" id="change-template">
+        <li>
+            <b data-bind="text: user"></b>
+            [<span data-bind="text: time"></span>]
+            <ol data-bind="foreach: details">
+                <li>
+                    &lt;!-- ko if: type == 'change' --&gt;
+                    <span data-bind="text: 'set ' + path + ': ' + value"></span>
+                    &lt;!-- /ko --&gt;
+                    &lt;!-- ko if: type == 'insert' --&gt;
+                    <span data-bind="text: 'insert ' + path + ': ' + value"></span>
+                    &lt;!-- /ko --&gt;
+                    &lt;!-- ko if: type == 'remove' --&gt;
+                    <span data-bind="text: 'remove ' + path"></span>
+                    &lt;!-- /ko --&gt;
+                    &lt;!-- ko if: type == 'swap' --&gt;
+                    <span data-bind="text: 'swap ' + path + ' with ' + from"></span>
+                    &lt;!-- /ko --&gt;
+                </li>
+            </ol>
+        </li>
+    </script>
+    <script type="text/html" id="plan-template">
+        <li class="panel panel-default">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <div class="navbar-brand">
+                            <span>#<span data-bind="text: $index() + 1"></span>: </span>
+                            <input class="plan-description-editor" data-bind="value: description, event: {blur: onDescriptionEditorBlur, click: onDescriptionClick}, css: {editing: editDescription}, attr: {size: (description() || '').length}" title="click to edit plan name"/>
+                            <span> (<span data-bind="text: projectCount"></span>/<span data-bind="text: inventory.environment.projects.length"></span>)</span>
+                            <small class="glyphicon glyphicon-pencil edit-icon" data-bind="click: onDescriptionClick"></small>
+                        </div>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a title="Verify Message from Jenkins">
+                                    &lt;!-- ko if: verifyMessage() === 'OK' --&gt;
+                                    <span class="verified-ok">发版计划已校验通过</span>
+                                    &lt;!-- /ko --&gt;
+                                    &lt;!-- ko if: verifyMessage() !== 'OK' &amp;&amp; items().length > 0 --&gt;
+                                    <span class="verified-error" data-bind="text: verifyMessage() ? verifyMessage() : $parent.sharedBy() ? 'Jenkins正在校验中' : ''"></span>
+                                    &lt;!-- /ko --&gt;
+                                </a>
+                            </li>
+                            &lt;!-- ko if: $parent.sharedBy --&gt;
+                            <li>
+                                <a data-bind="click: onRequestRefresh" title="refresh this plan">
+                                    <span class="glyphicon glyphicon-refresh"></span>
+                                </a>
+                            </li>
+                            &lt;!-- /ko --&gt;
+                            <li>
+                                <a data-bind="click: onAddSearchingItem" title="add groovy searching item">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bind="click: onToggleAdvancedOptions" title="toggle advanced options">
+                                    <span class="glyphicon glyphicon-cog"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bind="click: onCopy" title="copy this plan and paste it">
+                                    <span class="glyphicon glyphicon-copy"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bind="click: onRemove" title="remove this plan">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bind="click: onSwapWithPrevious" title="swap this plan with previous one">
+                                    <span class="glyphicon glyphicon-arrow-up"></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a data-bind="click: onSwapWithNext" title="swap this plan with next one">
+                                    <span class="glyphicon glyphicon-arrow-down"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="panel-body plan-sections">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="plan-section">
+                            <h5>Search a project to add</h5>
+                            <input class="form-control" data-bind="autocomplete: {data: leftItemsJson, format: projectAutoCompleteFormat, onSelect: projectAutoCompleteOnSelect}" placeholder="Search Project ..."/>
+                        </div>
+                        <div class="plan-section">
+                            <h5>Paste your plan summary here</h5>
+                            <textarea rows="7" class="form-control plan-summary" data-bind="textInput: deploySummary, hasFocus: deploySummaryHasFocus"></textarea>
+                        </div>
+                        &lt;!-- ko if: syncMessage --&gt;
+                        <div class="plan-section">
+                            <h5>Auto Sync from JIRA</h5>
+                            <div>
+                                &lt;!-- ko if: syncMessage() === 'OK' --&gt;
+                                <span class="verified-ok">已从JIRA中同步最新的发版计划</span>
+                                &lt;!-- /ko --&gt;
+                                &lt;!-- ko if: syncMessage() !== 'OK' --&gt;
+                                <span class="verified-error" data-bind="text: syncMessage() ? syncMessage() : $inventory.sharedBy() ? 'Jenkins正在从JIRA同步' : ''"></span>
+                                &lt;!-- /ko --&gt;
+                            </div>
+                        </div>
+                        &lt;!-- /ko --&gt;
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row" data-bind="visible: showAdvancedOptions">
+                            <div class="col-md-4">
+                                <div class="checkbox plan-section">
+                                    <div>
+                                        <h5>Involved Sections</h5>
+                                        <ul class="checkbox-list" data-bind="foreach: sections">
+                                            <li>
+                                                <label>
+                                                    <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.sectionsChosen"/>
+                                                    <span data-bind="text: $data"></span>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="checkbox plan-section">
+                                    <h5>Servers to Deploy</h5>
+                                    <ul class="checkbox-list">
+                                        <li>
+                                            <label>
+                                                <input type="checkbox" data-bind="checked: chosenAllServers"/>
+                                                <span>all</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                    <ul class="checkbox-list" data-bind="foreach: servers">
+                                        <li>
+                                            <label>
+                                                <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.serversChosen"/>
+                                                <span data-bind="text: $data"/>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="checkbox plan-section">
+                                    <h5>Plan options</h5>
+                                    <ul class="checkbox-list plan-options">
+                                        <li>
+                                            <label><input type="checkbox" data-bind="checked: confirmBeforeFinish"/>Confirm Before Finish</label>
+                                        </li>
+                                        <li>
+                                            <label><input type="checkbox" data-bind="checked: reverseOrderUI"/>Reverse Order</label>
+                                        </li>
+                                        <li>
+                                            <label><input type="checkbox" data-bind="checked: expandAllItems"/>Expand All Items</label>
+                                        </li>
+                                        <li>
+                                            <label>Allow up to <input class="input-small" data-bind="value: parallel"/> Parallel</label>
+                                        </li>
+                                    </ul>
+                                    <h5>Extra Tasks To Skip</h5>
+                                    <ul class="checkbox-list" data-bind="foreach: allTasks">
+                                        <li>
+                                            <label>
+                                                <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.extraTasksToSkip"/>
+                                                <span data-bind="text: $data"/>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" data-bind="visible: !showAdvancedOptions()">
+                            <div class="col-md-12">
+                                <div class="dependency-graph-container" data-bind="cytoscape: {data: dependencyGraphData, onRemoveNode: onGraphRemoveNode, onAddDependency: onGraphAddDependency, onRemoveDependency: onGraphRemoveDependency}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 3em"></th>
+                        <th style="width: 14em">Project</th>
+                        <th style="width: 14em">Branch</th>
+                        <th>Sync</th>
+                        <th>Verify</th>
+                        <th style="width: 14em">Owner</th>
+                        <th style="width: 14em">Confirm</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="template: {name: 'item-template', foreach: items, afterAdd: showElement, beforeRemove: hideElement}"></tbody>
+            </table>
+        </li>
+    </script>
+
+    <script type="text/html" id="item-template">
+        <tr class="plan-item" data-bind="css: {expanded: expanded}">
+            <td data-bind="attr: {rowspan: totalRowspan}">
+                <a class="glyphicon glyphicon-trash" data-bind="click: onRemove"></a>
+            </td>
+            <td>
+                <a style="font-size: 1.2em" data-bind="text: itemTitle, attr: {title: 'include following projects: \n' + project().projectName.replace(/,/g,'\n')}, click: onExpanded"></a>
+            </td>
+            <td>
+                <div data-bind="if: projectBranch">
+                    <input class="form-control project-branch" data-bind="value: projectBranch().value"/>
+                </div>
+            </td>
+            <td>
+                <div data-bind="if: syncMessage()">
+                    &lt;!-- ko if: syncMessage() === 'OK' --&gt;
+                    <span class="glyphicon glyphicon-ok verified-ok"></span>
+                    &lt;!-- /ko --&gt;
+                    &lt;!-- ko if: syncMessage() !== 'OK' --&gt;
+                    <span data-bind="text: syncMessage, css: syncMessage().startsWith('Error:') ? 'verified-error' : 'verified-warning'"></span>
+                    &lt;!-- /ko --&gt;
+                </div>
+            </td>
+            <td>
+                <div data-bind="if: verifyMessage()">
+                    &lt;!-- ko if: verifyMessage() === 'OK' --&gt;
+                    <span class="glyphicon glyphicon-ok verified-ok"></span>
+                    &lt;!-- /ko --&gt;
+                    &lt;!-- ko if: verifyMessage() !== 'OK' --&gt;
+                    <span data-bind="text: verifyMessage, css: verifyMessage().startsWith('Error:') ? 'verified-error' : 'verified-warning'"></span>
+                    &lt;!-- /ko --&gt;
+                </div>
+            </td>
+            <td>
+                <span data-bind="text: owner"></span>
+            </td>
+            <td>
+                &lt;!-- ko if: verifyMessage --&gt;
+                <input type="checkbox" data-bind="checked: isConfirmed, disable: verifyMessage().startsWith('Error:')"/>
+                &lt;!-- ko if: confirmedBy --&gt;
+                <span style="margin-left: 0.3em" class="confirmed" data-bind="text: 'Confirmed By ' + confirmedBy()"></span>
+                &lt;!-- /ko --&gt;
+                &lt;!-- /ko --&gt;
+                &lt;!-- ko if: !verifyMessage() &amp;&amp; $parent.inventory.sharedBy() --&gt;
+                <span>Jenkins正在校验中</span>
+                &lt;!-- /ko --&gt;
+            </td>
+        </tr>
+        &lt;!-- ko if: expanded --&gt;
+        &lt;!-- ko if: searchScriptUI --&gt;
+        <tr class="plan-item-detail">
+            <th>Search Script</th>
+            <td colspan="5">
+                <div class="form search-script-editor">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input class="form-control" data-bind="value: searchScriptDescription"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Groovy Script</label>
+                        <textarea class="form-control" rows="5" data-bind="value: searchScriptUI, css: {'has-error': searchScriptExecutionError}, hasFocus: searchScriptEditorOnFocus"></textarea>
+                        <pre class="error-message" data-bind="text: searchScriptExecutionError, visible: searchScriptExecutionError"></pre>
+
+                        <p class="help-block">
+                            Currently Selected Project List:
+                            <em data-bind="text: project().projectName.replace(/,/g, ' ')"></em>
+                        </p>
+                        <p class="help-block">
+                            You can use following variables to produce a list of projects:
+                            <ul>
+                                <li><em>projects</em>: All available projects</li>
+                                <li><em>plan</em>: Current plan</li>
+                                <li><em>env</em>: Current environment</li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+        &lt;!-- /ko --&gt;
+        <tr class="plan-item-detail">
+            <th>Dependencies</th>
+            <th>Tags</th>
+            <th colspan="2">Servers</th>
+            <th colspan="2">Skip Tags</th>
+        </tr>
+        <tr class="plan-item-detail">
+            <td>
+                <ul class="item-dependency-list item-dependency-list-static" data-bind="foreach: staticDependencies">
+                    <li>
+                        <a>
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                        <span data-bind="text: $data"></span>
+                    </li>
+                </ul>
+                <ul class="item-dependency-list" data-bind="foreach: dependencies">
+                    <li>
+                        <a data-bind="click: $parent.onRemoveDependency">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                        <span data-bind="text: $data"></span>
+                    </li>
+                </ul>
+                <input class="form-control" data-bind="autocomplete: {data: addDependencyOptions, onSelect: onAddDependency}" placeholder="add dependency ..."/>
+            </td>
+            <td>
+                <ul class="checkbox-list checkbox" data-bind="foreach: project().tags">
+                    <li>
+                        <label>
+                            <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.tags"/>
+                            <span data-bind="text: $data"></span>
+                        </label>
+                    </li>
+                </ul>
+            </td>
+            <td colspan="2">
+                <ul class="checkbox-list checkbox" data-bind="foreach: project().servers">
+                    <li>
+                        <label>
+                            <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.servers"/>
+                            <span data-bind="text: $data"></span>
+                        </label>
+                    </li>
+                </ul>
+            </td>
+            <td colspan="2">
+                <ul class="checkbox-list checkbox" data-bind="foreach: project().skipTags">
+                    <li>
+                        <label>
+                            <input type="checkbox" data-bind="checkedValue: $data, checked: $parent.skipTags"/>
+                            <span data-bind="text: $data"></span>
+                        </label>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        &lt;!-- ko foreach: visibleParameters --&gt;
+        <tr class="plan-item-detail">
+            &lt;!-- ko if: $index() == 0 --&gt;
+            <th data-bind="attr: {rowspan: $parent.visibleParameters().length}">Parameters</th>
+            &lt;!-- /ko --&gt;
+            <th data-bind="text: parameterName"></th>
+            <td colspan="4">
+                <div data-bind="if: type == 'boolean'">
+                    <input type="checkbox" data-bind="checked: value"/>
+                </div>
+                <div data-bind="if: type != 'boolean'">
+                    <input class="form-control" data-bind="value: value"/>
+                </div>
+            </td>
+        </tr>
+        &lt;!-- /ko --&gt;
+        &lt;!-- /ko --&gt;
+    </script>
+
+    <script src="${resURL}/plugin/playbook-pipeline/js/jquery-3.1.1.js"></script>
+    <script>jQuery.noConflict();</script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/knockout-3.4.2.debug.js"></script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/knockout.autocomplete.js"></script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/cytoscape.js"></script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/cola.js"></script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/cytoscape-cola.js"></script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/cytoscape-context-menus.js"></script>
+    <script src="${rootURL}/plugin/playbook-pipeline/js/deploy-plan-parameter.js"></script>
+    <script>
+        (function(){
+        var serviceObject = <st:bind value="${it}"/>;
+        var currentUser = "${it.currentUserID}";
+        var environmentJson = ${it.environmentJson};
+        var predefinedInventoryListJson = ${it.predefinedInventoryList.toJson()};
+        var deployInventoryJson = ${it.defaultDeployInventory.toJson()};
+        var wrapper = ${it.name}DeployPlanParameterWrapper;
+        initDeployPlanParameterScript(serviceObject, currentUser, environmentJson, deployInventoryJson, predefinedInventoryListJson, wrapper);
+        })();
+    </script>
+</j:jelly>

@@ -1,0 +1,365 @@
+html {
+    overflow-y: hidden;
+}
+
+.deploy-plan-parameter-wrapper {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    overflow-y: scroll;
+    padding-top: 30px;
+}
+
+.deploy-plan-parameter-wrapper .inventory-li {
+    clear: right;
+}
+
+.deploy-plan-parameter-wrapper .right-icon {
+    display: none;
+    float: right;
+    z-index: 1000;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.deploy-plan-parameter-wrapper .right-icon:first-child {
+    margin-right: 20px;
+}
+
+.deploy-plan-parameter-wrapper .inventory-li:hover .right-icon {
+    display: block;
+}
+
+.deploy-plan-parameter-wrapper .plans, .deploy-plan-parameter-wrapper .plans>li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.deploy-plan-parameter-wrapper .plans>li {
+    margin-bottom: 1em;
+}
+
+.deploy-plan-parameter-wrapper .right {
+    float: right;
+}
+
+.deploy-plan-parameter-wrapper .checkbox-list, .deploy-plan-parameter-wrapper .checkbox-list>li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.deploy-plan-parameter-wrapper .plan-section .checkbox-list>li {
+    display: inline-block;
+    margin-right: 0.2em;
+    min-width: 7.5em;
+}
+
+.deploy-plan-parameter-wrapper .plan-section .plan-options>li{
+    display: block;
+    position: relative;
+    z-index: 1010;
+}
+
+.deploy-plan-parameter-wrapper .plans .navbar {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    margin-bottom: 0;
+    background-color: #f0f0f0;
+    border-bottom-color: #a5a9a4;
+}
+
+.deploy-plan-parameter-wrapper .plans .panel {
+    background-color: #fdfdfd;
+    box-shadow: 0 1px 1px #aaa;
+}
+
+.deploy-plan-parameter-wrapper .plan-item.expanded {
+    background-color: #f6f6f6;
+}
+
+.deploy-plan-parameter-wrapper .plan-item-detail {
+    background-color: #fff
+}
+
+.deploy-plan-parameter-wrapper .plan-item > td, .deploy-plan-parameter-wrapper .plan-item > td input {
+    vertical-align: middle;
+    font-size: 0.95em;
+}
+
+.deploy-plan-parameter-wrapper .plan-item-detail .parameters, .deploy-plan-parameter-wrapper .plan-item-detail .parameters>li{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.deploy-plan-parameter-wrapper .panel-default {
+    border-color: #a99999;
+}
+
+.deploy-plan-parameter-wrapper .panel-default:hover {
+    border-color: #80946e;
+}
+
+.deploy-plan-parameter-wrapper .plan-section {
+    padding-left: 10px;
+    border-left: 1px solid lightgray;
+}
+
+.deploy-plan-parameter-wrapper .plan-sections .checkbox label {
+    min-height: 0;
+    font-size: 10px;
+}
+
+.deploy-plan-parameter-wrapper .input-small {
+    width: 1.5em;
+    outline: none;
+    border: 1px solid lightgray;
+    padding: 3px;
+    line-height: 100%;
+}
+
+.deploy-plan-parameter-wrapper .options label {
+    margin-right: 0.5em;
+    border-left: 1px solid lightgray;
+    padding-left: 0.5em;
+}
+
+.deploy-plan-parameter-wrapper .options label input[type=checkbox] {
+    margin-right: 0.2em;
+}
+
+.deploy-plan-parameter-wrapper a {
+    cursor: pointer;
+}
+
+.knockout-autocomplete.menu {
+    z-index: 1001;
+}
+
+table.parameters > tbody:hover {
+    background: none;
+}
+
+.project-branch {
+    min-width: 15em;
+}
+
+.deploy-plan-parameter-wrapper .inventory-title {
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+.deploy-plan-parameter-wrapper .inventory-title input {
+    padding: 0 0.1em;
+    margin: 0 0 0 0.15em;
+    min-width: 5em;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    outline: 0;
+    line-height: 100%;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    text-shadow: 1px 1px 2px #999;
+}
+
+.deploy-plan-parameter-wrapper .inventory-title input:focus {
+    border-color: #66afe9;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+}
+
+.deploy-plan-parameter-wrapper .inventory-title .right {
+    position: absolute;
+    right: 0;
+}
+
+.deploy-plan-parameter-wrapper .inventory-title .right button {
+    margin-left: 1em;
+}
+
+.deploy-plan-parameter-wrapper nav button {
+    margin-left: 1em;
+    background-color: #fafafa;
+}
+
+.deploy-plan-parameter-wrapper .plan-description-editor {
+    width: auto;
+    padding: 5px 5px 5px 5px;
+    margin: -10px auto auto auto;
+    line-height: 10px;
+    min-width: 3em;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+.deploy-plan-parameter-wrapper .plan-description-editor.editing {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.deploy-plan-parameter-wrapper .plan-description-editor:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+}
+
+.deploy-plan-parameter-wrapper .dependency-graph-container {
+    height: 256px;
+    border: 1px solid #ccc;
+    background-color: #fefefe;
+    border-radius: 3px;
+}
+
+.deploy-plan-parameter-wrapper .item-dependency-list, .deploy-plan-parameter-wrapper .item-dependency-list > li{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.deploy-plan-parameter-wrapper .item-dependency-list > li {
+    margin: 5px auto;
+}
+
+.deploy-plan-parameter-wrapper .item-dependency-list > li > a {
+    margin-right: 0.5em;
+}
+
+.deploy-plan-parameter-wrapper .item-dependency-list-static > li > a > span {
+    color: #c3c3c3;
+}
+
+.deploy-plan-parameter-wrapper .plan-item-detail th {
+    vertical-align: middle;
+}
+
+.deploy-plan-parameter-wrapper .edit-icon {
+    font-size: 0.5em;
+    margin-left: 0.5em;
+    cursor: pointer;
+}
+
+.deploy-plan-parameter-wrapper .error-message {
+    color: red;
+    margin-top: 1em;
+}
+
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+.sidebar {
+    display: none;
+}
+@media (min-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 51px;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        display: block;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        background-color: #f5f5f5;
+        border-right: 1px solid #eee;
+    }
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+    margin-right: -21px; /* 20px padding + 1px border */
+    margin-bottom: 20px;
+    margin-left: -20px;
+}
+.nav-sidebar > li > a {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+    color: #fff;
+    background-color: #428bca;
+}
+
+.deploy-plan-parameter-wrapper .inventory-changes-container {
+    color: #636363;
+}
+
+.deploy-plan-parameter-wrapper .inventory-changes-container h3 {
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+.deploy-plan-parameter-wrapper .inventory-changes-container ul {
+    list-style-type: square;
+}
+
+.deploy-plan-parameter-wrapper .inventory-changes-container ol {
+    padding-left: 1em;
+}
+
+.deploy-plan-parameter-wrapper .verified-error {
+    color: red;
+    font-weight: bold;
+}
+
+.deploy-plan-parameter-wrapper .verified-warning {
+    color: orange;
+    font-weight: bold;
+}
+
+.deploy-plan-parameter-wrapper .verified-ok {
+    color: green;
+    font-weight: bold;
+}
+
+.deploy-plan-parameter-wrapper .confirmed {
+    color: green;
+    font-weight: bold;
+}
+
+.deploy-plan-parameter-wrapper .confirmed .glyphicon {
+    margin-right: 0.5em;
+}
+
+.deploy-plan-parameter-wrapper .sharing-log {
+    font-size: 0.8em;
+    color: #45405a;
+}
+
+/*
+ * Main content
+ */
+
+.main {
+    padding: 20px;
+}
+@media (min-width: 768px) {
+    .main {
+        padding-right: 40px;
+        padding-left: 40px;
+    }
+}
+.main .page-header {
+    margin-top: 0;
+}

@@ -1,0 +1,32 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:section title="YIT Deploy Configuration Project">
+        <f:entry field="projectRepositoryUrl" title="Project Repository URL">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="projectBranch" title="Config Branch Name">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="localPath" title="Project Folder Path">
+            <f:textbox default="${JENKINS_HOME}/playbook-pipeline/config"/>
+        </f:entry>
+        <f:entry field="maxDelay" title="Max Checkout Delay in Milliseconds">
+            <f:textbox default="1000"/>
+        </f:entry>
+        <f:entry field="storageUrl" title="Storage URL">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="storageUsername" title="Storage Username">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="storagePassword" title="Storage Password">
+            <f:password/>
+        </f:entry>
+        <f:entry field="storageBranch" title="Storage Branch">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="envs" title="Included Envs">
+            <f:textbox/>
+        </f:entry>
+    </f:section>
+</j:jelly>

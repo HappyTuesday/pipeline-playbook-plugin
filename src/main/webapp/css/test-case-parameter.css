@@ -1,0 +1,26 @@
+.case-wrapper .form-group {
+    display: flex;
+    align-items: center;
+}
+
+.case-header .btn-remove {
+    cursor: pointer;
+}
+
+.case-wrapper .form-group .control-label.required:after {
+    content: "*";
+    color: red;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+#main-panel > form > table > tbody:nth-child(2),
+#main-panel > form > table > tbody:nth-child(5),
+#main-panel > form > table > tbody:nth-child(7),
+#main-panel > form > table > tbody:nth-child(11){
+    display: none;
+}
+
+.form-group .parameter-tips {
+    color: #5bc0de;
+}

@@ -1,0 +1,104 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+         xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/bootstrap.css"/>
+    <!--<link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/knockout.autocomplete.css"/>-->
+    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/test-case-parameter.css"/>
+
+    <f:entry title="${it.name}">
+        <div name="parameter">
+            <input type="hidden" name="name" value="${it.name}"/>
+            <input type="hidden" name="value" data-bind="value: testInfo"/>
+            <div class="cases-wrapper col-md-10" data-bind="foreach: {data: testCases, as: 'testCase'}">
+                <div class="case-wrapper panel panel-default">
+                    <div class="case-header panel-heading">
+                        <label>步骤<span data-bind="text: $index() + 1"></span></label>
+                        <span class="glyphicon glyphicon-remove pull-right btn-remove" data-bind="click: $parent.removeCase"></span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label col-md-2">类别</label>
+                            <div class="col-md-5">
+                                <select class="form-control"
+                                    data-bind="options: testCase.categories,
+                                    optionsText:function(item) {return item.categoryName;},
+                                    value: testCase.selectedCategory,
+                                    optionsCaption: '请选择分类'">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" data-bind="if: testCase.selectedCategory()">
+                            <label class="control-label col-md-2">测试用例</label>
+                            <div class="col-md-5">
+                                <select class="form-control"
+                                    data-bind="
+                                    options: testCase.selectedCategory().testCases,
+                                    optionsText: function(item) {return item.description;},
+                                    value: selectedTestCase,
+                                    optionsCaption: '请选择测试用例'">
+                                </select>
+                            </div>
+                        </div>
+                        <div data-bind="if: selectedTestCase()">
+                            <div data-bind="foreach: {data: selectedTestCase().parameters, as: 'param'}">
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" data-bind="text: param.description, css: {required: param.required}"></label>
+                                    <div class="col-md-5 parameter-wrapper"
+                                         data-bind="if: param.type === 'java.lang.String',
+                                                    css:{hidden: param.type != 'java.lang.String'}">
+                                        <div data-bind="ifnot: $parents[1].hasOptions(param), css: {'has-error': $parents[1].hasError(param)}">
+                                            <input type="textbox"
+                                                   class="form-control"
+                                                   data-bind="value: param.value"/>
+                                        </div>
+                                        <div data-bind="if: $parents[1].hasOptions(param)">
+                                            <select class="form-control"
+                                                    data-bind="options: param.options,
+                                                           optionsText: function(item) {return item.text;},
+                                                           optionsValue: function(item) {return item.value;},
+                                                           value: param.value">
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-5 parameter-wrapper"
+                                         data-bind="if: param.type === 'java.lang.Integer',
+                                                    css:{hidden: param.type != 'java.lang.Integer'}">
+                                        <div data-bind="ifnot: $parents[1].hasOptions(param)">
+                                            <input type="number" class="form-control" data-bind="value: param.value"/>
+                                        </div>
+                                        <div data-bind="if: $parents[1].hasOptions(param)">
+                                            <select class="form-control"
+                                                    data-bind="options: param.options,
+                                                           optionsText: function(item){return item.text;},
+                                                           optionsValue: function(item) {return item.value;},
+                                                           value: param.value">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1 parameter-wrapper"
+                                         data-bind="if: param.type === 'java.lang.Boolean',
+                                                    css:{hidden: param.type != 'java.lang.Boolean'}">
+                                        <input type="checkbox" data-bind="checked: param.value"/>
+                                    </div>
+                                    <div class="parameter-tips" data-bind="text: param.tips"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button"  class="btn btn-primary btn-add-step" data-bind="click: addCase">新增测试步骤</button>
+        </div>
+    </f:entry>
+
+    <script src="${resURL}/plugin/playbook-pipeline/js/jquery-3.1.1.js"></script>
+    <script>jQuery.noConflict();</script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/knockout-3.4.2.debug.js"></script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/knockout.autocomplete.js"></script>
+    <script>
+        var serviceScript = <st:bind value = "${it}" />;
+    </script>
+    <script src="${resURL}/plugin/playbook-pipeline/js/test-case-parameter.js"></script>
+</j:jelly>
