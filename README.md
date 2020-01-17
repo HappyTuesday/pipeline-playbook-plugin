@@ -22,3 +22,5 @@ A generated job means a project in a specified environment.
 The generated jobs will be shown at your Jenkins home page. If you want to deploy one project in an environment, just navigate to the corresponding job and click the build button of that job(some defined parameters can be input).
 
 Once a job is executed, the corresponding job of the corresponding project will be executed, which means all the plays defined in that playbook will be executed, which means all tasks defined in that plays will be executed. In each task, the variables(configurations) defined in the corresponding environment and project are available to the groovy closure of that task.
+
+Please refer [guide](doc/guide.md) for detailed info about how to use this plugin.
