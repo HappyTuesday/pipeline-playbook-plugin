@@ -27,7 +27,7 @@
 
 playbook-config项目用来管理所有的环境、项目和剧本的定义。
 
-从`git@github.com:HappyTuesday/pipeline-playbook-config.git`获取最新的playbook config模版，然后将其提交到你的私有仓库中。
+从 [pipeline-playbook-config](https://github.com/HappyTuesday/pipeline-playbook-config) 获取最新的playbook config模版，然后将其提交到你的私有仓库中。
 
 在playbook-config中定义所有的环境、项目和剧本。
 
