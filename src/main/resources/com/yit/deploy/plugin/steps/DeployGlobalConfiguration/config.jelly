@@ -8,7 +8,7 @@
             <f:textbox/>
         </f:entry>
         <f:entry field="localPath" title="Project Folder Path">
-            <f:textbox default="${JENKINS_HOME}/playbook-pipeline/config"/>
+            <f:textbox default="${JENKINS_HOME}/pipeline-playbook/config"/>
         </f:entry>
         <f:entry field="maxDelay" title="Max Checkout Delay in Milliseconds">
             <f:textbox default="1000"/>

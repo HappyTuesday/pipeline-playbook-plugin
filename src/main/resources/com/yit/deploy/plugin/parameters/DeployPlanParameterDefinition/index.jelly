@@ -1,9 +1,9 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/bootstrap.css"/>
-    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/knockout.autocomplete.css"/>
-    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/cytoscape-context-menus.css"/>
-    <link rel="stylesheet" href="${rootURL}/plugin/playbook-pipeline/css/deploy-plan-parameter.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/pipeline-playbook/css/bootstrap.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/pipeline-playbook/css/knockout.autocomplete.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/pipeline-playbook/css/cytoscape-context-menus.css"/>
+    <link rel="stylesheet" href="${rootURL}/plugin/pipeline-playbook/css/deploy-plan-parameter.css"/>
 
     <f:entry title="${it.name}">
         <div class="deploy-plan-parameter-wrapper" name="parameter" id="${it.name}DeployPlanParameterWrapper">
@@ -18,7 +18,7 @@
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="${rootURL}">Jenkins Home</a></li>
-                            <li><a href="${rootURL}/plugin/playbook-pipeline/help.html">Help</a></li>
+                            <li><a href="${rootURL}/plugin/pipeline-playbook/help.html">Help</a></li>
                         </ul>
                         <div class="form navbar-form navbar-right">
                             <div class="form-group">
@@ -480,15 +480,15 @@
         &lt;!-- /ko --&gt;
     </script>
 
-    <script src="${resURL}/plugin/playbook-pipeline/js/jquery-3.1.1.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/jquery-3.1.1.js"></script>
     <script>jQuery.noConflict();</script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/knockout-3.4.2.debug.js"></script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/knockout.autocomplete.js"></script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/cytoscape.js"></script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/cola.js"></script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/cytoscape-cola.js"></script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/cytoscape-context-menus.js"></script>
-    <script src="${rootURL}/plugin/playbook-pipeline/js/deploy-plan-parameter.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/knockout-3.4.2.debug.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/knockout.autocomplete.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/cytoscape.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/cola.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/cytoscape-cola.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/cytoscape-context-menus.js"></script>
+    <script src="${rootURL}/plugin/pipeline-playbook/js/deploy-plan-parameter.js"></script>
     <script>
         (function(){
         var serviceObject = <st:bind value="${it}"/>;

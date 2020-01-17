@@ -1,4 +1,4 @@
-The playbook-pipeline-core is a script engine which will parse and execute another provided script project called deploy.config, in which the actual compiling & deploying progress logic is defined.
+The pipeline-playbook-core is a script engine which will parse and execute another provided script project called deploy.config, in which the actual compiling & deploying progress logic is defined.
 
 ## The Deploy Config Project
 
@@ -15,7 +15,7 @@ Project deploy.config contains following information:
 
 ## How the Engine Works
 
-The playbook-pipeline-core loads and parses the deploy.config project to determine all the information(environments, playbooks and projects), and for every project in every environment we generate a job.
+The pipeline-playbook-core loads and parses the deploy.config project to determine all the information(environments, playbooks and projects), and for every project in every environment we generate a job.
 
 A generated job means a project in a specified environment.
 

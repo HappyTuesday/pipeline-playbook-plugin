@@ -1,6 +1,6 @@
 import request from '../utils/request';
 
-const apiRoot = "/playbook-pipeline-manage";
+const apiRoot = "/pipeline-playbook-manage";
 
 export async function getBranches() {
   return request(apiRoot + '/getBranches', {

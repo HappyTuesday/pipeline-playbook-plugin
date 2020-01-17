@@ -40,7 +40,7 @@ public class DeployManagement extends ManagementLink {
     @CheckForNull
     @Override
     public String getIconFileName() {
-        return "/plugin/playbook-pipeline/images/deploy.png";
+        return "/plugin/pipeline-playbook/images/deploy.png";
     }
 
     /**
@@ -53,7 +53,7 @@ public class DeployManagement extends ManagementLink {
     @CheckForNull
     @Override
     public String getUrlName() {
-        return "playbook-pipeline-manage";
+        return "pipeline-playbook-manage";
     }
 
     /**
@@ -71,16 +71,16 @@ public class DeployManagement extends ManagementLink {
     }
 
     private URL getStaticResourceURL(String resourceName) throws MalformedURLException {
-        Plugin plugin = Jenkins.get().getPlugin("playbook-pipeline");
+        Plugin plugin = Jenkins.get().getPlugin("pipeline-playbook");
         if (plugin == null) {
-            throw new IllegalArgumentException("could not find plugin playbook-pipeline");
+            throw new IllegalArgumentException("could not find plugin pipeline-playbook");
         }
 
         return new URL(plugin.getWrapper().baseResourceURL, resourceName);
     }
 
     public void doIndex(StaplerRequest request, StaplerResponse response) throws ServletException, IOException {
-        response.serveFile(request, getStaticResourceURL("playbook-pipeline-manage/index.html"));
+        response.serveFile(request, getStaticResourceURL("pipeline-playbook-manage/index.html"));
     }
 
     public void doDynamic(StaplerRequest request, StaplerResponse response) throws ServletException, IOException {

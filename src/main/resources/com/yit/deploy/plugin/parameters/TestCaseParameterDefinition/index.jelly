@@ -2,9 +2,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
          xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/bootstrap.css"/>
-    <!--<link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/knockout.autocomplete.css"/>-->
-    <link rel="stylesheet" href="${resURL}/plugin/playbook-pipeline/css/test-case-parameter.css"/>
+    <link rel="stylesheet" href="${resURL}/plugin/pipeline-playbook/css/bootstrap.css"/>
+    <!--<link rel="stylesheet" href="${resURL}/plugin/pipeline-playbook/css/knockout.autocomplete.css"/>-->
+    <link rel="stylesheet" href="${resURL}/plugin/pipeline-playbook/css/test-case-parameter.css"/>
 
     <f:entry title="${it.name}">
         <div name="parameter">
@@ -93,12 +93,12 @@
         </div>
     </f:entry>
 
-    <script src="${resURL}/plugin/playbook-pipeline/js/jquery-3.1.1.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/jquery-3.1.1.js"></script>
     <script>jQuery.noConflict();</script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/knockout-3.4.2.debug.js"></script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/knockout.autocomplete.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/knockout-3.4.2.debug.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/knockout.autocomplete.js"></script>
     <script>
         var serviceScript = <st:bind value = "${it}" />;
     </script>
-    <script src="${resURL}/plugin/playbook-pipeline/js/test-case-parameter.js"></script>
+    <script src="${resURL}/plugin/pipeline-playbook/js/test-case-parameter.js"></script>
 </j:jelly>

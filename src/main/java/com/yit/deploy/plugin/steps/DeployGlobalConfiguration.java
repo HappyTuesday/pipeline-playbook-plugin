@@ -39,7 +39,7 @@ public class DeployGlobalConfiguration extends GlobalConfiguration {
     private String projectBranch;
 
     @DataBoundSetter
-    private String localPath = "${JENKINS_HOME}/playbook-pipeline/config";
+    private String localPath = "${JENKINS_HOME}/pipeline-playbook/config";
 
     @DataBoundSetter
     private long maxDelay = 1000;

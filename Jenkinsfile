@@ -86,13 +86,14 @@ node ("master") {
 
     stage ("compile plugin and install plugin") {
         sh "./mvnw -DskipTests=true package"
-        def changed = installPluginFromLocalFile "$env.WORKSPACE/target/playbook-pipeline.hpi"
+        def changed = installPluginFromLocalFile "$env.WORKSPACE/target/pipeline-playbook.hpi"
         changed |= disablePlugins([
             "project-branch-parameter-plugin",
             "hidden-parameter-plugin",
             "deploy-plan-parameter-plugin",
             "groovy-cps-extension-plugin",
-            "deploy-plugin"
+            "deploy-plugin",
+            "playbook-pipeline"
          ])
         if (changed) {
             while (true) {

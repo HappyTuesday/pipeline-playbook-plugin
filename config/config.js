@@ -1,7 +1,7 @@
 export default {
-    outputPath: "src/main/webapp/playbook-pipeline-manage/",
-    base: "/playbook-pipeline-manage/",
-    publicPath: "/plugin/playbook-pipeline/playbook-pipeline-manage/",
+    outputPath: "src/main/webapp/pipeline-playbook-manage/",
+    base: "/pipeline-playbook-manage/",
+    publicPath: "/plugin/pipeline-playbook/pipeline-playbook-manage/",
     plugins: [
         [
             'umi-plugin-react',
